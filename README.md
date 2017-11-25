@@ -3,6 +3,25 @@
 Apply NetApp quarter at regular intervals.
 
 ## Description
+```
+Usage of netapp-quota:
+  -off-interval int
+        quota off interval (default 300)
+  -on-interval int
+        quota on interval (default 10)
+  -password string
+        netapp api BasicAuthPassword
+  -prefix string
+        netapp volume prefix
+  -svm string
+        netapp svm server name
+  -url string
+        netapp api endpoint
+  -user string
+        netapp api BasicAuthUser
+  -version
+        Print version information and quit.
+```
 
 
 ## Install
