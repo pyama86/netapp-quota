@@ -175,9 +175,12 @@ func hasQuota(client *netapp.Client, svm, volume string) (bool, error) {
 			Volume:  volume,
 		},
 	})
-
 	if err != nil {
 		return false, err
+	}
+
+	if !quotaList.Results.Passed() {
+		return false, fmt.Errorf("get quota list error")
 	}
 
 	for _, q := range quotaList.Results.AttributesList.QuotaEntry {
