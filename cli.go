@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/johntdyer/slackrus"
 	"github.com/pepabo/go-netapp/netapp"
 	"github.com/sirupsen/logrus"
 )
@@ -56,13 +57,15 @@ var Name = "netapp-quota"
 // Run invokes the CLI with the given arguments.
 func (cli *CLI) Run(args []string) int {
 	var (
-		url         string
-		user        string
-		password    string
-		prefix      string
-		svm         string
-		onInterval  int
-		offInterval int
+		url          string
+		user         string
+		password     string
+		prefix       string
+		svm          string
+		onInterval   int
+		offInterval  int
+		slackURL     string
+		slackChannel string
 
 		version bool
 	)
@@ -86,6 +89,9 @@ func (cli *CLI) Run(args []string) int {
 
 	flags.BoolVar(&version, "version", false, "Print version information and quit.")
 
+	flags.StringVar(&slackURL, "slack-url", "", "slack webhook url")
+	flags.StringVar(&slackChannel, "slack-channel", "", "slack channel")
+
 	// Parse commandline flag
 	if err := flags.Parse(args[1:]); err != nil {
 		return ExitCodeError
@@ -95,6 +101,16 @@ func (cli *CLI) Run(args []string) int {
 	if version {
 		printVersion()
 		return ExitCodeOK
+	}
+
+	if slackURL != "" && slackChannel != "" {
+		logrus.AddHook(&slackrus.SlackrusHook{
+			HookURL:        slackURL,
+			AcceptedLevels: slackrus.LevelThreshold(logrus.ErrorLevel),
+			Channel:        slackChannel,
+			IconEmoji:      ":ghost:",
+			Username:       Name,
+		})
 	}
 
 	client := netapp.NewClient(
