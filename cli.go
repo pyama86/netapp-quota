@@ -170,9 +170,11 @@ func fncSwitchQuota(fn func(client *netapp.Client, vserver, volume string) error
 func hasQuota(client *netapp.Client, svm, volume string) (bool, error) {
 	quotaList, _, err := client.Quota.List(&netapp.QuotaOptions{
 		MaxRecords: 2,
-		Query: &netapp.QuotaEntry{
-			Vserver: svm,
-			Volume:  volume,
+		Query: &netapp.QuotaQuery{
+			&netapp.QuotaEntry{
+				Vserver: svm,
+				Volume:  volume,
+			},
 		},
 	})
 	if err != nil {
