@@ -232,7 +232,9 @@ func switchQuota(res *netapp.QuotaStatusResponse, r *http.Response, err error) e
 		return err
 	}
 	if !res.Results.Passed() {
-		return fmt.Errorf("switchQuota failed: %s", res.Results.Reason)
+		if strings.Index(res.Results.Reason, "Another quota operation is currently in progress") == -1 {
+			return fmt.Errorf("switchQuota failed: %s", res.Results.Reason)
+		}
 	}
 	return nil
 }
